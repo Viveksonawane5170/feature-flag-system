@@ -2,6 +2,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI
 from app.routers.auth import router as auth_router
 from app.routers.protected import router as protected_router
+from app.routers.admin import router as admin_router
 app = FastAPI(
     title="Feature Flag Management System",
     description="API for managing feature flags",
@@ -14,6 +15,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+app.include_router(admin_router)
 app.include_router(auth_router)
 app.include_router(protected_router)
 
