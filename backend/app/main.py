@@ -1,4 +1,6 @@
 from fastapi.middleware.cors import CORSMiddleware
+from app.routers.environments import router as environments_router
+from app.routers.flags import router as flags_router
 from fastapi import FastAPI
 from app.routers.auth import router as auth_router
 from app.routers.protected import router as protected_router
@@ -18,7 +20,8 @@ app.add_middleware(
 app.include_router(admin_router)
 app.include_router(auth_router)
 app.include_router(protected_router)
-
+app.include_router(flags_router)
+app.include_router(environments_router)
 
 @app.get("/")
 def home():
