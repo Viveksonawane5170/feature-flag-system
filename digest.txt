@@ -1,0 +1,2227 @@
+Directory structure:
+└── feature-flag-system/
+    ├── README.md
+    ├── backend/
+    │   ├── alembic.ini
+    │   ├── requirements.txt
+    │   ├── app/
+    │   │   ├── main.py
+    │   │   ├── database/
+    │   │   │   ├── auth_dependencies.py
+    │   │   │   ├── connection.py
+    │   │   │   ├── dependencies.py
+    │   │   │   └── test_connection.py
+    │   │   ├── models/
+    │   │   │   ├── __init__.py
+    │   │   │   ├── audit_log.py
+    │   │   │   ├── environment.py
+    │   │   │   ├── evaluation_stats.py
+    │   │   │   ├── flag.py
+    │   │   │   ├── flag_version.py
+    │   │   │   ├── targeting_rule.py
+    │   │   │   ├── user.py
+    │   │   │   ├── user_group.py
+    │   │   │   └── user_group_membership.py
+    │   │   ├── routers/
+    │   │   │   ├── admin.py
+    │   │   │   ├── auth.py
+    │   │   │   ├── environments.py
+    │   │   │   ├── flags.py
+    │   │   │   └── protected.py
+    │   │   └── schemas/
+    │   │       ├── auth.py
+    │   │       ├── environment.py
+    │   │       └── flag.py
+    │   └── migrations/
+    │       ├── env.py
+    │       ├── README
+    │       ├── script.py.mako
+    │       └── versions/
+    │           └── aedefa390a23_create_initial_tables.py
+    └── frontend/
+        ├── README.md
+        ├── index.html
+        ├── package.json
+        ├── tsconfig.app.json
+        ├── tsconfig.json
+        ├── tsconfig.node.json
+        ├── vite.config.ts
+        ├── .oxlintrc.json
+        └── src/
+            ├── App.css
+            ├── App.tsx
+            ├── index.css
+            └── main.tsx
+
+================================================
+FILE: README.md
+================================================
+# Development-Of-A-Web-Based-Application-Feature-Management-System-With-Release-Control-Assis-OCT-2026
+
+
+================================================
+FILE: backend/alembic.ini
+================================================
+# A generic, single database configuration.
+
+[alembic]
+# path to migration scripts.
+# this is typically a path given in POSIX (e.g. forward slashes)
+# format, relative to the token %(here)s which refers to the location of this
+# ini file
+script_location = %(here)s/migrations
+
+# template used to generate migration file names; The default value is %%(rev)s_%%(slug)s
+# Uncomment the line below if you want the files to be prepended with date and time
+# see https://alembic.sqlalchemy.org/en/latest/tutorial.html#editing-the-ini-file
+# for all available tokens
+# file_template = %%(year)d_%%(month).2d_%%(day).2d_%%(hour).2d%%(minute).2d-%%(rev)s_%%(slug)s
+# Or organize into date-based subdirectories (requires recursive_version_locations = true)
+# file_template = %%(year)d/%%(month).2d/%%(day).2d_%%(hour).2d%%(minute).2d_%%(second).2d_%%(rev)s_%%(slug)s
+
+# sys.path path, will be prepended to sys.path if present.
+# defaults to the current working directory.  for multiple paths, the path separator
+# is defined by "path_separator" below.
+prepend_sys_path = .
+
+
+# timezone to use when rendering the date within the migration file
+# as well as the filename.
+# If specified, requires the tzdata library which can be installed by adding
+# `alembic[tz]` to the pip requirements.
+# string value is passed to ZoneInfo()
+# leave blank for localtime
+# timezone =
+
+# max length of characters to apply to the "slug" field
+# truncate_slug_length = 40
+
+# set to 'true' to run the environment during
+# the 'revision' command, regardless of autogenerate
+# revision_environment = false
+
+# set to 'true' to allow .pyc and .pyo files without
+# a source .py file to be detected as revisions in the
+# versions/ directory
+# sourceless = false
+
+# version location specification; This defaults
+# to <script_location>/versions.  When using multiple version
+# directories, initial revisions must be specified with --version-path.
+# The path separator used here should be the separator specified by "path_separator"
+# below.
+# version_locations = %(here)s/bar:%(here)s/bat:%(here)s/alembic/versions
+
+# path_separator; This indicates what character is used to split lists of file
+# paths, including version_locations and prepend_sys_path within configparser
+# files such as alembic.ini.
+# The default rendered in new alembic.ini files is "os", which uses os.pathsep
+# to provide os-dependent path splitting.
+#
+# Note that in order to support legacy alembic.ini files, this default does NOT
+# take place if path_separator is not present in alembic.ini.  If this
+# option is omitted entirely, fallback logic is as follows:
+#
+# 1. Parsing of the version_locations option falls back to using the legacy
+#    "version_path_separator" key, which if absent then falls back to the legacy
+#    behavior of splitting on spaces and/or commas.
+# 2. Parsing of the prepend_sys_path option falls back to the legacy
+#    behavior of splitting on spaces, commas, or colons.
+#
+# Valid values for path_separator are:
+#
+# path_separator = :
+# path_separator = ;
+# path_separator = space
+# path_separator = newline
+#
+# Use os.pathsep. Default configuration used for new projects.
+path_separator = os
+
+# set to 'true' to search source files recursively
+# in each "version_locations" directory
+# new in Alembic version 1.10
+# recursive_version_locations = false
+
+# the output encoding used when revision files
+# are written from script.py.mako
+# output_encoding = utf-8
+
+# database URL.  This is consumed by the user-maintained env.py script only.
+# other means of configuring database URLs may be customized within the env.py
+# file.
+sqlalchemy.url =
+
+
+[post_write_hooks]
+# post_write_hooks defines scripts or Python functions that are run
+# on newly generated revision scripts.  See the documentation for further
+# detail and examples
+
+# format using "black" - use the console_scripts runner, against the "black" entrypoint
+# hooks = black
+# black.type = console_scripts
+# black.entrypoint = black
+# black.options = -l 79 REVISION_SCRIPT_FILENAME
+
+# lint with attempts to fix using "ruff" - use the module runner, against the "ruff" module
+# hooks = ruff
+# ruff.type = module
+# ruff.module = ruff
+# ruff.options = check --fix REVISION_SCRIPT_FILENAME
+
+# Alternatively, use the exec runner to execute a binary found on your PATH
+# hooks = ruff
+# ruff.type = exec
+# ruff.executable = ruff
+# ruff.options = check --fix REVISION_SCRIPT_FILENAME
+
+# Logging configuration.  This is also consumed by the user-maintained
+# env.py script only.
+[loggers]
+keys = root,sqlalchemy,alembic
+
+[handlers]
+keys = console
+
+[formatters]
+keys = generic
+
+[logger_root]
+level = WARNING
+handlers = console
+qualname =
+
+[logger_sqlalchemy]
+level = WARNING
+handlers =
+qualname = sqlalchemy.engine
+
+[logger_alembic]
+level = INFO
+handlers =
+qualname = alembic
+
+[handler_console]
+class = StreamHandler
+args = (sys.stderr,)
+level = NOTSET
+formatter = generic
+
+[formatter_generic]
+format = %(levelname)-5.5s [%(name)s] %(message)s
+datefmt = %H:%M:%S
+
+
+
+================================================
+FILE: backend/requirements.txt
+================================================
+
+fastapi
+uvicorn[standard]
+sqlalchemy
+psycopg[binary]
+python-dotenv
+alembic
+pydantic
+
+
+
+================================================
+FILE: backend/app/main.py
+================================================
+from fastapi.middleware.cors import CORSMiddleware
+from app.routers.environments import router as environments_router
+from app.routers.flags import router as flags_router
+from fastapi import FastAPI
+from app.routers.auth import router as auth_router
+from app.routers.protected import router as protected_router
+from app.routers.admin import router as admin_router
+app = FastAPI(
+    title="Feature Flag Management System",
+    description="API for managing feature flags",
+    version="1.0.0"
+)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+app.include_router(admin_router)
+app.include_router(auth_router)
+app.include_router(protected_router)
+app.include_router(flags_router)
+app.include_router(environments_router)
+
+@app.get("/")
+def home():
+    return {"message": "Feature Flag Management System API is running!"}
+
+
+@app.get("/health")
+def health_check():
+    return {"status": "healthy"}
+
+
+
+================================================
+FILE: backend/app/database/auth_dependencies.py
+================================================
+
+import os
+
+import jwt
+from dotenv import load_dotenv
+from fastapi import Depends, HTTPException
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from sqlalchemy.orm import Session
+
+from app.database.dependencies import get_db
+from app.models import User
+
+load_dotenv()
+
+security = HTTPBearer()
+
+
+def get_current_user(
+    credentials: HTTPAuthorizationCredentials = Depends(security),
+    db: Session = Depends(get_db),
+):
+    token = credentials.credentials
+    secret_key = os.getenv("JWT_SECRET_KEY")
+
+    if not secret_key:
+        raise HTTPException(
+            status_code=500,
+            detail="JWT secret is not configured",
+        )
+
+    try:
+        payload = jwt.decode(
+            token,
+            secret_key,
+            algorithms=["HS256"],
+        )
+
+        user_id = int(payload["sub"])
+
+    except (jwt.InvalidTokenError, KeyError, TypeError, ValueError):
+        raise HTTPException(
+            status_code=401,
+            detail="Invalid or expired token",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
+    user = db.query(User).filter(User.id == user_id).first()
+
+    if not user or not user.is_active:
+        raise HTTPException(
+            status_code=401,
+            detail="User not found or inactive",
+        )
+
+    return user
+
+
+
+from fastapi import Depends, HTTPException, status
+
+# Keep your existing imports and get_current_user function.
+# Add this function at the end of auth_dependencies.py.
+
+def require_admin(
+    current_user=Depends(get_current_user),
+):
+    if current_user.role != "admin":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Admin access required",
+        )
+
+    return current_user
+
+
+
+================================================
+FILE: backend/app/database/connection.py
+================================================
+
+import os
+
+from dotenv import load_dotenv
+from sqlalchemy import create_engine
+from sqlalchemy.orm import declarative_base, sessionmaker
+
+load_dotenv()
+
+DATABASE_URL = os.getenv("DATABASE_URL")
+
+if not DATABASE_URL:
+    raise ValueError("DATABASE_URL is missing from the .env file")
+
+engine = create_engine(DATABASE_URL)
+
+SessionLocal = sessionmaker(
+    autocommit=False,
+    autoflush=False,
+    bind=engine
+)
+
+Base = declarative_base()
+
+
+
+================================================
+FILE: backend/app/database/dependencies.py
+================================================
+
+from app.database.connection import SessionLocal
+
+
+def get_db():
+    db = SessionLocal()
+
+    try:
+        yield db
+    finally:
+        db.close()
+
+
+
+================================================
+FILE: backend/app/database/test_connection.py
+================================================
+
+from sqlalchemy import text
+from app.database.connection import engine
+
+try:
+    with engine.connect() as connection:
+        result = connection.execute(text("SELECT version()"))
+        print("Database connected successfully!")
+        print(result.scalar())
+
+except Exception as error:
+    print("Database connection failed!")
+    print(error)
+
+
+
+================================================
+FILE: backend/app/models/__init__.py
+================================================
+
+from app.models.user import User
+from app.models.environment import Environment
+from app.models.flag import Flag
+from app.models.flag_version import FlagVersion
+from app.models.user_group import UserGroup
+from app.models.user_group_membership import UserGroupMembership
+from app.models.targeting_rule import TargetingRule
+from app.models.audit_log import AuditLog
+from app.models.evaluation_stats import EvaluationStats
+
+
+
+================================================
+FILE: backend/app/models/audit_log.py
+================================================
+
+from sqlalchemy import Column, BigInteger, String, DateTime, ForeignKey
+from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy.sql import func
+
+from app.database.connection import Base
+
+
+class AuditLog(Base):
+    __tablename__ = "audit_log"
+
+    id = Column(BigInteger, primary_key=True, index=True)
+
+    user_id = Column(
+        BigInteger,
+        ForeignKey("users.id"),
+        nullable=True
+    )
+
+    flag_id = Column(
+        BigInteger,
+        ForeignKey("flags.id"),
+        nullable=True
+    )
+
+    action = Column(String, nullable=False)
+    before_value = Column(JSONB, nullable=True)
+    after_value = Column(JSONB, nullable=True)
+
+    created_at = Column(
+        DateTime(timezone=True),
+        server_default=func.now()
+    )
+
+
+
+================================================
+FILE: backend/app/models/environment.py
+================================================
+
+from sqlalchemy import Column, BigInteger, String, Text, DateTime
+from sqlalchemy.sql import func
+
+from app.database.connection import Base
+
+
+class Environment(Base):
+    __tablename__ = "environments"
+
+    id = Column(BigInteger, primary_key=True, index=True)
+    name = Column(String, unique=True, nullable=False)
+    description = Column(Text, nullable=True)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+
+
+================================================
+FILE: backend/app/models/evaluation_stats.py
+================================================
+
+from sqlalchemy import (
+    Column, BigInteger, Integer, Date, ForeignKey
+)
+
+from app.database.connection import Base
+
+
+class EvaluationStats(Base):
+    __tablename__ = "evaluation_stats"
+
+    id = Column(BigInteger, primary_key=True, index=True)
+
+    flag_id = Column(
+        BigInteger,
+        ForeignKey("flags.id"),
+        nullable=False
+    )
+
+    environment_id = Column(
+        BigInteger,
+        ForeignKey("environments.id"),
+        nullable=False
+    )
+
+    date = Column(Date, nullable=False)
+    hour = Column(Integer, nullable=False)
+
+    evaluation_count = Column(
+        BigInteger,
+        nullable=False,
+        default=0
+    )
+
+
+
+================================================
+FILE: backend/app/models/flag.py
+================================================
+
+from sqlalchemy import (
+    Column, BigInteger, String, Boolean, Text,
+    DateTime, ForeignKey
+)
+from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy.sql import func
+
+from app.database.connection import Base
+
+
+class Flag(Base):
+    __tablename__ = "flags"
+
+    id = Column(BigInteger, primary_key=True, index=True)
+
+    environment_id = Column(
+        BigInteger,
+        ForeignKey("environments.id"),
+        nullable=False
+    )
+
+    key = Column(String, nullable=False, index=True)
+    type = Column(String, nullable=False, default="boolean")
+    default_value = Column(JSONB, nullable=False, default=False)
+    enabled = Column(Boolean, nullable=False, default=False)
+    description = Column(Text, nullable=True)
+    owner_team = Column(String, nullable=True)
+
+    created_by = Column(
+        BigInteger,
+        ForeignKey("users.id"),
+        nullable=False
+    )
+
+    created_at = Column(
+        DateTime(timezone=True),
+        server_default=func.now()
+    )
+
+    updated_at = Column(
+        DateTime(timezone=True),
+        server_default=func.now(),
+        onupdate=func.now()
+    )
+
+
+
+================================================
+FILE: backend/app/models/flag_version.py
+================================================
+
+from sqlalchemy import Column, BigInteger, Integer, DateTime, ForeignKey
+from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy.sql import func
+
+from app.database.connection import Base
+
+
+class FlagVersion(Base):
+    __tablename__ = "flag_versions"
+
+    id = Column(BigInteger, primary_key=True, index=True)
+
+    flag_id = Column(
+        BigInteger,
+        ForeignKey("flags.id"),
+        nullable=False
+    )
+
+    version_number = Column(Integer, nullable=False)
+
+    configuration = Column(JSONB, nullable=False)
+
+    created_by = Column(
+        BigInteger,
+        ForeignKey("users.id"),
+        nullable=False
+    )
+
+    created_at = Column(
+        DateTime(timezone=True),
+        server_default=func.now()
+    )
+
+
+
+================================================
+FILE: backend/app/models/targeting_rule.py
+================================================
+
+from sqlalchemy import (
+    Column, BigInteger, String, Integer, Boolean,
+    DateTime, ForeignKey
+)
+from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy.sql import func
+
+from app.database.connection import Base
+
+
+class TargetingRule(Base):
+    __tablename__ = "targeting_rules"
+
+    id = Column(BigInteger, primary_key=True, index=True)
+
+    flag_id = Column(
+        BigInteger,
+        ForeignKey("flags.id"),
+        nullable=False
+    )
+
+    rule_type = Column(String, nullable=False)
+    operator = Column(String, nullable=False)
+    attribute = Column(String, nullable=False)
+
+    value = Column(JSONB, nullable=False)
+    result = Column(JSONB, nullable=False)
+
+    priority = Column(Integer, nullable=False, default=1)
+    is_active = Column(Boolean, nullable=False, default=True)
+
+    created_at = Column(
+        DateTime(timezone=True),
+        server_default=func.now()
+    )
+
+
+
+================================================
+FILE: backend/app/models/user.py
+================================================
+
+from sqlalchemy import Column, BigInteger, String, Boolean, DateTime
+from sqlalchemy.sql import func
+
+from app.database.connection import Base
+
+
+class User(Base):
+    __tablename__ = "users"
+
+    id = Column(BigInteger, primary_key=True, index=True)
+    name = Column(String, nullable=False)
+    email = Column(String, unique=True, nullable=False, index=True)
+    password_hash = Column(String, nullable=False)
+    role = Column(String, nullable=False, default="user")
+    is_active = Column(Boolean, default=True, nullable=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+
+
+================================================
+FILE: backend/app/models/user_group.py
+================================================
+
+from sqlalchemy import Column, BigInteger, String, Text, DateTime
+from sqlalchemy.sql import func
+
+from app.database.connection import Base
+
+
+class UserGroup(Base):
+    __tablename__ = "user_groups"
+
+    id = Column(BigInteger, primary_key=True, index=True)
+    name = Column(String, unique=True, nullable=False)
+    description = Column(Text, nullable=True)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+
+
+================================================
+FILE: backend/app/models/user_group_membership.py
+================================================
+
+from sqlalchemy import Column, BigInteger, DateTime, ForeignKey
+from sqlalchemy.sql import func
+
+from app.database.connection import Base
+
+
+class UserGroupMembership(Base):
+    __tablename__ = "user_group_memberships"
+
+    id = Column(BigInteger, primary_key=True, index=True)
+
+    user_id = Column(
+        BigInteger,
+        ForeignKey("users.id"),
+        nullable=False
+    )
+
+    group_id = Column(
+        BigInteger,
+        ForeignKey("user_groups.id"),
+        nullable=False
+    )
+
+    created_at = Column(
+        DateTime(timezone=True),
+        server_default=func.now()
+    )
+
+
+
+================================================
+FILE: backend/app/routers/admin.py
+================================================
+
+from fastapi import APIRouter, Depends
+
+from app.database.auth_dependencies import require_admin
+from app.models import User
+
+router = APIRouter(
+    prefix="/api/admin",
+    tags=["Admin"],
+)
+
+
+@router.get("/test")
+def admin_test(
+    current_user: User = Depends(require_admin),
+):
+    return {
+        "message": "Admin access granted",
+        "user": current_user.name,
+        "role": current_user.role,
+    }
+
+
+
+================================================
+FILE: backend/app/routers/auth.py
+================================================
+
+import os
+from datetime import datetime, timedelta, timezone
+
+import jwt
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.orm import Session
+from pwdlib import PasswordHash
+
+from app.database.dependencies import get_db
+from app.models import User
+from app.schemas.auth import (
+    RegisterRequest,
+    RegisterResponse,
+    LoginRequest,
+    LoginResponse,
+)
+
+router = APIRouter(
+    prefix="/api/auth",
+    tags=["Authentication"]
+)
+
+password_hash = PasswordHash.recommended()
+
+
+# REGISTER API
+@router.post(
+    "/register",
+    response_model=RegisterResponse,
+    status_code=201
+)
+def register(
+    payload: RegisterRequest,
+    db: Session = Depends(get_db)
+):
+    email = str(payload.email).lower()
+
+    existing_user = db.query(User).filter(
+        User.email == email
+    ).first()
+
+    if existing_user:
+        raise HTTPException(
+            status_code=409,
+            detail="Email already registered"
+        )
+
+    new_user = User(
+        name=payload.name,
+        email=email,
+        password_hash=password_hash.hash(payload.password)
+    )
+
+    db.add(new_user)
+    db.commit()
+    db.refresh(new_user)
+
+    return new_user
+
+
+# LOGIN API
+@router.post("/login", response_model=LoginResponse)
+def login(
+    payload: LoginRequest,
+    db: Session = Depends(get_db)
+):
+    email = str(payload.email).lower()
+
+    user = db.query(User).filter(
+        User.email == email
+    ).first()
+
+    # Verify email and password
+    if not user or not password_hash.verify(
+        payload.password,
+        user.password_hash
+    ):
+        raise HTTPException(
+            status_code=401,
+            detail="Invalid email or password"
+        )
+
+    # Check whether the account is active
+    if not user.is_active:
+        raise HTTPException(
+            status_code=403,
+            detail="Account is inactive"
+        )
+
+    # Read JWT secret from .env
+    secret_key = os.getenv("JWT_SECRET_KEY")
+
+    if not secret_key:
+        raise HTTPException(
+            status_code=500,
+            detail="JWT secret is not configured"
+        )
+
+    # Generate JWT token valid for 30 minutes
+    token_payload = {
+        "sub": str(user.id),
+        "exp": datetime.now(timezone.utc)
+        + timedelta(minutes=30)
+    }
+
+    access_token = jwt.encode(
+        token_payload,
+        secret_key,
+        algorithm="HS256"
+    )
+
+    return {
+        "access_token": access_token,
+        "token_type": "bearer"
+    }
+
+
+
+================================================
+FILE: backend/app/routers/environments.py
+================================================
+
+import logging
+
+from fastapi import APIRouter, Depends, HTTPException, status
+from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.orm import Session
+
+from app.database.dependencies import get_db
+from app.database.auth_dependencies import require_admin
+from app.models import Environment, Flag
+from app.schemas.environment import (
+    EnvironmentCreate,
+    EnvironmentUpdate,
+    EnvironmentResponse,
+)
+from app.schemas.flag import FlagResponse
+
+logger = logging.getLogger(__name__)
+
+router = APIRouter(
+    prefix="/api/v1/environments",
+    tags=["Environments"],
+    dependencies=[Depends(require_admin)],
+)
+
+
+@router.post("", response_model=EnvironmentResponse,
+             status_code=status.HTTP_201_CREATED)
+def create_environment(data: EnvironmentCreate, db: Session = Depends(get_db)):
+    existing = db.query(Environment).filter(
+        Environment.name == data.name
+    ).first()
+
+    if existing:
+        raise HTTPException(409, "Environment name already exists")
+
+    environment = Environment(
+        name=data.name,
+        description=data.description,
+    )
+
+    try:
+        db.add(environment)
+        db.commit()
+        db.refresh(environment)
+        return environment
+    except SQLAlchemyError:
+        db.rollback()
+        logger.exception("Error creating environment")
+        raise HTTPException(500, "Database error while creating environment")
+
+
+@router.get("", response_model=list[EnvironmentResponse])
+def list_environments(db: Session = Depends(get_db)):
+    return db.query(Environment).order_by(Environment.id.desc()).all()
+
+
+@router.get("/{environment_id}", response_model=EnvironmentResponse)
+def get_environment(environment_id: int, db: Session = Depends(get_db)):
+    environment = db.query(Environment).filter(
+        Environment.id == environment_id
+    ).first()
+
+    if not environment:
+        raise HTTPException(404, "Environment not found")
+
+    return environment
+
+
+@router.put("/{environment_id}", response_model=EnvironmentResponse)
+def update_environment(
+    environment_id: int,
+    data: EnvironmentUpdate,
+    db: Session = Depends(get_db),
+):
+    environment = db.query(Environment).filter(
+        Environment.id == environment_id
+    ).first()
+
+    if not environment:
+        raise HTTPException(404, "Environment not found")
+
+    changes = data.model_dump(exclude_unset=True)
+
+    if "name" in changes and changes["name"] != environment.name:
+        duplicate = db.query(Environment).filter(
+            Environment.name == changes["name"]
+        ).first()
+
+        if duplicate:
+            raise HTTPException(409, "Environment name already exists")
+
+    for field, value in changes.items():
+        setattr(environment, field, value)
+
+    try:
+        db.commit()
+        db.refresh(environment)
+        return environment
+    except SQLAlchemyError:
+        db.rollback()
+        logger.exception("Error updating environment")
+        raise HTTPException(500, "Database error while updating environment")
+
+
+@router.delete("/{environment_id}")
+def delete_environment(environment_id: int, db: Session = Depends(get_db)):
+    environment = db.query(Environment).filter(
+        Environment.id == environment_id
+    ).first()
+
+    if not environment:
+        raise HTTPException(404, "Environment not found")
+
+    related_flags = db.query(Flag).filter(
+        Flag.environment_id == environment_id
+    ).first()
+
+    if related_flags:
+        raise HTTPException(
+            409,
+            "Cannot delete environment while flags are linked to it",
+        )
+
+    try:
+        db.delete(environment)
+        db.commit()
+        return {
+            "message": "Environment deleted successfully",
+            "environment_id": environment_id,
+        }
+    except SQLAlchemyError:
+        db.rollback()
+        logger.exception("Error deleting environment")
+        raise HTTPException(500, "Database error while deleting environment")
+
+
+@router.get("/{environment_id}/flags", response_model=list[FlagResponse])
+def get_environment_flags(
+    environment_id: int,
+    db: Session = Depends(get_db),
+):
+    environment = db.query(Environment).filter(
+        Environment.id == environment_id
+    ).first()
+
+    if not environment:
+        raise HTTPException(404, "Environment not found")
+
+    return db.query(Flag).filter(
+        Flag.environment_id == environment_id
+    ).order_by(Flag.id.desc()).all()
+
+
+
+================================================
+FILE: backend/app/routers/flags.py
+================================================
+import logging
+from fastapi import APIRouter, Depends, HTTPException, status
+from sqlalchemy.orm import Session
+
+from app.database.dependencies import get_db
+from app.database.auth_dependencies import require_admin, get_current_user
+from app.models import Flag, Environment
+from app.schemas.flag import FlagCreate, FlagUpdate, FlagResponse
+
+router = APIRouter(
+    prefix="/api/v1/flags",
+    tags=["Feature Flags"],
+    dependencies=[Depends(require_admin)],
+)
+
+
+@router.post("", response_model=FlagResponse, status_code=status.HTTP_201_CREATED)
+def create_flag(
+    data: FlagCreate,
+    db: Session = Depends(get_db),
+    current_user=Depends(get_current_user),
+):
+    environment = db.query(Environment).filter(
+        Environment.id == data.environment_id
+    ).first()
+
+    if not environment:
+        raise HTTPException(status_code=404, detail="Environment not found")
+
+    duplicate = db.query(Flag).filter(
+        Flag.environment_id == data.environment_id,
+        Flag.key == data.key,
+    ).first()
+
+    if duplicate:
+        raise HTTPException(
+            status_code=409,
+            detail="Flag key already exists in this environment",
+        )
+
+    flag = Flag(
+        key=data.key,
+        type=data.type,
+        default_value=data.default_value,
+        enabled=data.enabled,
+        description=data.description,
+        environment_id=data.environment_id,
+        owner_team=data.owner_team,
+        created_by=current_user.id,
+    )
+
+    db.add(flag)
+
+    try:
+        db.commit()
+        db.refresh(flag)
+        return flag
+    except Exception:
+        db.rollback()
+        raise HTTPException(status_code=400, detail="Could not create flag")
+
+
+@router.get("", response_model=list[FlagResponse])
+def list_flags(db: Session = Depends(get_db)):
+    return db.query(Flag).order_by(Flag.id.desc()).all()
+
+
+@router.get("/{flag_id}", response_model=FlagResponse)
+def get_flag(flag_id: int, db: Session = Depends(get_db)):
+    flag = db.query(Flag).filter(Flag.id == flag_id).first()
+
+    if not flag:
+        raise HTTPException(status_code=404, detail="Flag not found")
+
+    return flag
+
+
+@router.put("/{flag_id}", response_model=FlagResponse)
+def update_flag(
+    flag_id: int,
+    data: FlagUpdate,
+    db: Session = Depends(get_db),
+):
+    flag = db.query(Flag).filter(Flag.id == flag_id).first()
+
+    if not flag:
+        raise HTTPException(status_code=404, detail="Flag not found")
+
+    changes = data.model_dump(exclude_unset=True)
+
+    if "environment_id" in changes:
+        environment = db.query(Environment).filter(
+            Environment.id == changes["environment_id"]
+        ).first()
+
+        if not environment:
+            raise HTTPException(status_code=404, detail="Environment not found")
+
+    new_environment_id = changes.get("environment_id", flag.environment_id)
+    new_key = changes.get("key", flag.key)
+
+    duplicate = db.query(Flag).filter(
+        Flag.environment_id == new_environment_id,
+        Flag.key == new_key,
+        Flag.id != flag_id,
+    ).first()
+
+    if duplicate:
+        raise HTTPException(
+            status_code=409,
+            detail="Flag key already exists in this environment",
+        )
+
+    for field, value in changes.items():
+        setattr(flag, field, value)
+
+    try:
+        db.commit()
+        db.refresh(flag)
+        return flag
+    except Exception:
+        db.rollback()
+        raise HTTPException(status_code=400, detail="Could not update flag")
+
+
+@router.delete("/{flag_id}")
+def delete_flag(flag_id: int, db: Session = Depends(get_db)):
+    flag = db.query(Flag).filter(Flag.id == flag_id).first()
+
+    if not flag:
+        raise HTTPException(status_code=404, detail="Flag not found")
+
+    db.delete(flag)
+
+    try:
+        db.commit()
+        return {
+            "message": "Flag deleted successfully",
+            "flag_id": flag_id,
+        }
+    except Exception:
+        db.rollback()
+        raise HTTPException(
+            status_code=409,
+            detail="Flag cannot be deleted because related records reference it",
+        )
+
+
+
+================================================
+FILE: backend/app/routers/protected.py
+================================================
+
+from fastapi import APIRouter, Depends
+
+from app.database.auth_dependencies import get_current_user
+from app.models import User
+
+router = APIRouter(
+    prefix="/api",
+    tags=["Protected APIs"],
+)
+
+
+@router.get("/auth/me")
+def get_my_profile(
+    current_user: User = Depends(get_current_user),
+):
+    return {
+        "id": current_user.id,
+        "name": current_user.name,
+        "email": current_user.email,
+        "role": current_user.role,
+        "is_active": current_user.is_active,
+    }
+
+
+
+================================================
+FILE: backend/app/schemas/auth.py
+================================================
+
+from pydantic import BaseModel, EmailStr, Field
+
+
+class RegisterRequest(BaseModel):
+    name: str = Field(min_length=2, max_length=100)
+    email: EmailStr
+    password: str = Field(min_length=8, max_length=128)
+
+
+class RegisterResponse(BaseModel):
+    id: int
+    name: str
+    email: EmailStr
+    role: str
+    is_active: bool
+
+    model_config = {"from_attributes": True}
+
+
+from pydantic import BaseModel, EmailStr, Field
+
+
+class LoginRequest(BaseModel):
+    email: EmailStr
+    password: str = Field(min_length=8, max_length=128)
+
+
+class LoginResponse(BaseModel):
+    access_token: str
+    token_type: str = "bearer"
+
+
+
+================================================
+FILE: backend/app/schemas/environment.py
+================================================
+
+from pydantic import BaseModel, ConfigDict, Field
+
+
+class EnvironmentCreate(BaseModel):
+    name: str = Field(min_length=1, max_length=255)
+    description: str | None = None
+
+
+class EnvironmentUpdate(BaseModel):
+    name: str | None = Field(default=None, min_length=1, max_length=255)
+    description: str | None = None
+
+
+class EnvironmentResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    name: str
+    description: str | None = None
+
+
+
+================================================
+FILE: backend/app/schemas/flag.py
+================================================
+
+from typing import Any, Literal
+
+from pydantic import BaseModel, ConfigDict, Field
+
+
+class FlagCreate(BaseModel):
+    key: str = Field(min_length=1, max_length=255)
+    type: Literal["boolean", "string", "number"] = "boolean"
+    default_value: Any = False
+    enabled: bool = False
+    description: str | None = None
+    environment_id: int = Field(gt=0)
+    owner_team: str | None = None
+
+
+class FlagUpdate(BaseModel):
+    key: str | None = Field(default=None, min_length=1, max_length=255)
+    type: Literal["boolean", "string", "number"] | None = None
+    default_value: Any = None
+    enabled: bool | None = None
+    description: str | None = None
+    environment_id: int | None = Field(default=None, gt=0)
+    owner_team: str | None = None
+
+
+class FlagResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    key: str
+    type: str
+    default_value: Any
+    enabled: bool
+    description: str | None
+    environment_id: int
+    owner_team: str | None
+
+
+
+================================================
+FILE: backend/migrations/env.py
+================================================
+
+import os
+from logging.config import fileConfig
+
+from alembic import context
+from dotenv import load_dotenv
+from sqlalchemy import engine_from_config, pool
+
+from app.database.connection import Base
+import app.models
+
+# Load environment variables from backend/.env
+load_dotenv()
+
+# Alembic configuration
+config = context.config
+
+# Configure logging
+if config.config_file_name is not None:
+    fileConfig(config.config_file_name)
+
+# Register all SQLAlchemy models
+target_metadata = Base.metadata
+
+
+def run_migrations_offline() -> None:
+    """Run migrations without creating a database connection."""
+
+    database_url = os.environ.get("DATABASE_URL")
+
+    if not database_url:
+        raise ValueError("DATABASE_URL is missing from backend/.env")
+
+    context.configure(
+        url=database_url,
+        target_metadata=target_metadata,
+        literal_binds=True,
+        dialect_opts={"paramstyle": "named"},
+    )
+
+    with context.begin_transaction():
+        context.run_migrations()
+
+
+def run_migrations_online() -> None:
+    """Run migrations using a live database connection."""
+
+    database_url = os.environ.get("DATABASE_URL")
+
+    if not database_url:
+        raise ValueError("DATABASE_URL is missing from backend/.env")
+
+    # Read the database URL from .env
+    config.set_main_option(
+        "sqlalchemy.url",
+        database_url.replace("%", "%%"),
+    )
+
+    connectable = engine_from_config(
+        config.get_section(config.config_ini_section, {}),
+        prefix="sqlalchemy.",
+        poolclass=pool.NullPool,
+    )
+
+    with connectable.connect() as connection:
+        context.configure(
+            connection=connection,
+            target_metadata=target_metadata,
+        )
+
+        with context.begin_transaction():
+            context.run_migrations()
+
+
+if context.is_offline_mode():
+    run_migrations_offline()
+else:
+    run_migrations_online()
+
+
+
+================================================
+FILE: backend/migrations/README
+================================================
+Generic single-database configuration.
+
+
+================================================
+FILE: backend/migrations/script.py.mako
+================================================
+"""${message}
+
+Revision ID: ${up_revision}
+Revises: ${down_revision | comma,n}
+Create Date: ${create_date}
+
+"""
+from typing import Sequence, Union
+
+from alembic import op
+import sqlalchemy as sa
+${imports if imports else ""}
+
+# revision identifiers, used by Alembic.
+revision: str = ${repr(up_revision)}
+down_revision: Union[str, Sequence[str], None] = ${repr(down_revision)}
+branch_labels: Union[str, Sequence[str], None] = ${repr(branch_labels)}
+depends_on: Union[str, Sequence[str], None] = ${repr(depends_on)}
+
+
+def upgrade() -> None:
+    """Upgrade schema."""
+    ${upgrades if upgrades else "pass"}
+
+
+def downgrade() -> None:
+    """Downgrade schema."""
+    ${downgrades if downgrades else "pass"}
+
+
+
+================================================
+FILE: backend/migrations/versions/aedefa390a23_create_initial_tables.py
+================================================
+"""create initial tables
+
+Revision ID: aedefa390a23
+Revises: 
+Create Date: 2026-10-15 17:33:16.457344
+
+"""
+from typing import Sequence, Union
+
+from alembic import op
+import sqlalchemy as sa
+from sqlalchemy.dialects import postgresql
+
+# revision identifiers, used by Alembic.
+revision: str = 'aedefa390a23'
+down_revision: Union[str, Sequence[str], None] = None
+branch_labels: Union[str, Sequence[str], None] = None
+depends_on: Union[str, Sequence[str], None] = None
+
+
+def upgrade() -> None:
+    """Upgrade schema."""
+    # ### commands auto generated by Alembic - please adjust! ###
+    op.create_table('environments',
+    sa.Column('id', sa.BigInteger(), nullable=False),
+    sa.Column('name', sa.String(), nullable=False),
+    sa.Column('description', sa.Text(), nullable=True),
+    sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=True),
+    sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('name')
+    )
+    op.create_index(op.f('ix_environments_id'), 'environments', ['id'], unique=False)
+    op.create_table('user_groups',
+    sa.Column('id', sa.BigInteger(), nullable=False),
+    sa.Column('name', sa.String(), nullable=False),
+    sa.Column('description', sa.Text(), nullable=True),
+    sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=True),
+    sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('name')
+    )
+    op.create_index(op.f('ix_user_groups_id'), 'user_groups', ['id'], unique=False)
+    op.create_table('users',
+    sa.Column('id', sa.BigInteger(), nullable=False),
+    sa.Column('name', sa.String(), nullable=False),
+    sa.Column('email', sa.String(), nullable=False),
+    sa.Column('password_hash', sa.String(), nullable=False),
+    sa.Column('role', sa.String(), nullable=False),
+    sa.Column('is_active', sa.Boolean(), nullable=False),
+    sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=True),
+    sa.PrimaryKeyConstraint('id')
+    )
+    op.create_index(op.f('ix_users_email'), 'users', ['email'], unique=True)
+    op.create_index(op.f('ix_users_id'), 'users', ['id'], unique=False)
+    op.create_table('flags',
+    sa.Column('id', sa.BigInteger(), nullable=False),
+    sa.Column('environment_id', sa.BigInteger(), nullable=False),
+    sa.Column('key', sa.String(), nullable=False),
+    sa.Column('type', sa.String(), nullable=False),
+    sa.Column('default_value', postgresql.JSONB(astext_type=sa.Text()), nullable=False),
+    sa.Column('enabled', sa.Boolean(), nullable=False),
+    sa.Column('description', sa.Text(), nullable=True),
+    sa.Column('owner_team', sa.String(), nullable=True),
+    sa.Column('created_by', sa.BigInteger(), nullable=False),
+    sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=True),
+    sa.Column('updated_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=True),
+    sa.ForeignKeyConstraint(['created_by'], ['users.id'], ),
+    sa.ForeignKeyConstraint(['environment_id'], ['environments.id'], ),
+    sa.PrimaryKeyConstraint('id')
+    )
+    op.create_index(op.f('ix_flags_id'), 'flags', ['id'], unique=False)
+    op.create_index(op.f('ix_flags_key'), 'flags', ['key'], unique=False)
+    op.create_table('user_group_memberships',
+    sa.Column('id', sa.BigInteger(), nullable=False),
+    sa.Column('user_id', sa.BigInteger(), nullable=False),
+    sa.Column('group_id', sa.BigInteger(), nullable=False),
+    sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=True),
+    sa.ForeignKeyConstraint(['group_id'], ['user_groups.id'], ),
+    sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
+    sa.PrimaryKeyConstraint('id')
+    )
+    op.create_index(op.f('ix_user_group_memberships_id'), 'user_group_memberships', ['id'], unique=False)
+    op.create_table('audit_log',
+    sa.Column('id', sa.BigInteger(), nullable=False),
+    sa.Column('user_id', sa.BigInteger(), nullable=True),
+    sa.Column('flag_id', sa.BigInteger(), nullable=True),
+    sa.Column('action', sa.String(), nullable=False),
+    sa.Column('before_value', postgresql.JSONB(astext_type=sa.Text()), nullable=True),
+    sa.Column('after_value', postgresql.JSONB(astext_type=sa.Text()), nullable=True),
+    sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=True),
+    sa.ForeignKeyConstraint(['flag_id'], ['flags.id'], ),
+    sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
+    sa.PrimaryKeyConstraint('id')
+    )
+    op.create_index(op.f('ix_audit_log_id'), 'audit_log', ['id'], unique=False)
+    op.create_table('evaluation_stats',
+    sa.Column('id', sa.BigInteger(), nullable=False),
+    sa.Column('flag_id', sa.BigInteger(), nullable=False),
+    sa.Column('environment_id', sa.BigInteger(), nullable=False),
+    sa.Column('date', sa.Date(), nullable=False),
+    sa.Column('hour', sa.Integer(), nullable=False),
+    sa.Column('evaluation_count', sa.BigInteger(), nullable=False),
+    sa.ForeignKeyConstraint(['environment_id'], ['environments.id'], ),
+    sa.ForeignKeyConstraint(['flag_id'], ['flags.id'], ),
+    sa.PrimaryKeyConstraint('id')
+    )
+    op.create_index(op.f('ix_evaluation_stats_id'), 'evaluation_stats', ['id'], unique=False)
+    op.create_table('flag_versions',
+    sa.Column('id', sa.BigInteger(), nullable=False),
+    sa.Column('flag_id', sa.BigInteger(), nullable=False),
+    sa.Column('version_number', sa.Integer(), nullable=False),
+    sa.Column('configuration', postgresql.JSONB(astext_type=sa.Text()), nullable=False),
+    sa.Column('created_by', sa.BigInteger(), nullable=False),
+    sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=True),
+    sa.ForeignKeyConstraint(['created_by'], ['users.id'], ),
+    sa.ForeignKeyConstraint(['flag_id'], ['flags.id'], ),
+    sa.PrimaryKeyConstraint('id')
+    )
+    op.create_index(op.f('ix_flag_versions_id'), 'flag_versions', ['id'], unique=False)
+    op.create_table('targeting_rules',
+    sa.Column('id', sa.BigInteger(), nullable=False),
+    sa.Column('flag_id', sa.BigInteger(), nullable=False),
+    sa.Column('rule_type', sa.String(), nullable=False),
+    sa.Column('operator', sa.String(), nullable=False),
+    sa.Column('attribute', sa.String(), nullable=False),
+    sa.Column('value', postgresql.JSONB(astext_type=sa.Text()), nullable=False),
+    sa.Column('result', postgresql.JSONB(astext_type=sa.Text()), nullable=False),
+    sa.Column('priority', sa.Integer(), nullable=False),
+    sa.Column('is_active', sa.Boolean(), nullable=False),
+    sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=True),
+    sa.ForeignKeyConstraint(['flag_id'], ['flags.id'], ),
+    sa.PrimaryKeyConstraint('id')
+    )
+    op.create_index(op.f('ix_targeting_rules_id'), 'targeting_rules', ['id'], unique=False)
+    # ### end Alembic commands ###
+
+
+def downgrade() -> None:
+    """Downgrade schema."""
+    # ### commands auto generated by Alembic - please adjust! ###
+    op.drop_index(op.f('ix_targeting_rules_id'), table_name='targeting_rules')
+    op.drop_table('targeting_rules')
+    op.drop_index(op.f('ix_flag_versions_id'), table_name='flag_versions')
+    op.drop_table('flag_versions')
+    op.drop_index(op.f('ix_evaluation_stats_id'), table_name='evaluation_stats')
+    op.drop_table('evaluation_stats')
+    op.drop_index(op.f('ix_audit_log_id'), table_name='audit_log')
+    op.drop_table('audit_log')
+    op.drop_index(op.f('ix_user_group_memberships_id'), table_name='user_group_memberships')
+    op.drop_table('user_group_memberships')
+    op.drop_index(op.f('ix_flags_key'), table_name='flags')
+    op.drop_index(op.f('ix_flags_id'), table_name='flags')
+    op.drop_table('flags')
+    op.drop_index(op.f('ix_users_id'), table_name='users')
+    op.drop_index(op.f('ix_users_email'), table_name='users')
+    op.drop_table('users')
+    op.drop_index(op.f('ix_user_groups_id'), table_name='user_groups')
+    op.drop_table('user_groups')
+    op.drop_index(op.f('ix_environments_id'), table_name='environments')
+    op.drop_table('environments')
+    # ### end Alembic commands ###
+
+
+
+================================================
+FILE: frontend/README.md
+================================================
+# React + TypeScript + Vite
+
+This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+
+Currently, two official plugins are available:
+
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+
+## React Compiler
+
+The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+
+## Expanding the Oxlint configuration
+
+If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
+
+```json
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["react", "typescript", "oxc"],
+  "options": {
+    "typeAware": true
+  },
+  "rules": {
+    "react/rules-of-hooks": "error",
+    "react/only-export-components": ["warn", { "allowConstantExport": true }]
+  }
+}
+```
+
+See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+
+
+
+================================================
+FILE: frontend/index.html
+================================================
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>frontend</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
+
+
+
+================================================
+FILE: frontend/package.json
+================================================
+{
+  "name": "frontend",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "lint": "oxlint",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8"
+  },
+  "devDependencies": {
+    "@types/node": "^24.13.3",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.7",
+    "@vitejs/plugin-react": "^6.1.1",
+    "oxlint": "^1.81.0",
+    "typescript": "~6.0.2",
+    "vite": "^8.3.0"
+  }
+}
+
+
+
+================================================
+FILE: frontend/tsconfig.app.json
+================================================
+{
+  "compilerOptions": {
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
+    "target": "es2023",
+    "lib": ["ES2023", "DOM"],
+    "module": "esnext",
+    "types": ["vite/client"],
+    "allowArbitraryExtensions": true,
+    "skipLibCheck": true,
+
+    /* Bundler mode */
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "verbatimModuleSyntax": true,
+    "moduleDetection": "force",
+    "noEmit": true,
+    "jsx": "react-jsx",
+
+    /* Linting */
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "erasableSyntaxOnly": true,
+    "noFallthroughCasesInSwitch": true
+  },
+  "include": ["src"]
+}
+
+
+
+================================================
+FILE: frontend/tsconfig.json
+================================================
+{
+  "files": [],
+  "references": [
+    { "path": "./tsconfig.app.json" },
+    { "path": "./tsconfig.node.json" }
+  ]
+}
+
+
+
+================================================
+FILE: frontend/tsconfig.node.json
+================================================
+{
+  "compilerOptions": {
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.node.tsbuildinfo",
+    "target": "es2023",
+    "lib": ["ES2023"],
+    "types": ["node"],
+    "skipLibCheck": true,
+
+    /* Bundler mode */
+    "module": "nodenext",
+    "allowImportingTsExtensions": true,
+    "verbatimModuleSyntax": true,
+    "moduleDetection": "force",
+    "noEmit": true,
+
+    /* Linting */
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "erasableSyntaxOnly": true,
+    "noFallthroughCasesInSwitch": true
+  },
+  "include": ["vite.config.ts"]
+}
+
+
+
+================================================
+FILE: frontend/vite.config.ts
+================================================
+import react from '@vitejs/plugin-react'
+import { defineConfig } from 'vite'
+
+// https://vite.dev/config/
+export default defineConfig({
+  plugins: [react()],
+})
+
+
+
+================================================
+FILE: frontend/.oxlintrc.json
+================================================
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["react", "typescript", "oxc"],
+  "rules": {
+    "react/rules-of-hooks": "error",
+    "react/only-export-components": ["warn", { "allowConstantExport": true }]
+  }
+}
+
+
+
+================================================
+FILE: frontend/src/App.css
+================================================
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f1f5f9;
+  color: #172033;
+}
+
+.page {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 24px;
+}
+
+.auth-card {
+  background: white;
+  width: 100%;
+  max-width: 430px;
+  padding: 32px;
+  border-radius: 16px;
+  box-shadow: 0 10px 35px #00000012;
+}
+
+h1 {
+  text-align: center;
+  font-size: 25px;
+  margin-bottom: 8px;
+}
+
+.subtitle,
+.footer-text {
+  text-align: center;
+  color: #64748b;
+  font-size: 14px;
+}
+
+.tabs {
+  display: flex;
+  background: #f1f5f9;
+  padding: 4px;
+  border-radius: 8px;
+  margin: 28px 0;
+}
+
+.tabs button {
+  flex: 1;
+  padding: 11px;
+  border: none;
+  cursor: pointer;
+  border-radius: 6px;
+  background: transparent;
+  font-size: 15px;
+}
+
+.tabs button.active {
+  background: #2563eb;
+  color: white;
+}
+
+h2 {
+  font-size: 21px;
+  margin-bottom: 22px;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+label {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+input {
+  padding: 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 7px;
+  font-size: 15px;
+  width: 100%;
+}
+
+input:focus {
+  outline: 2px solid #93c5fd;
+  border-color: #2563eb;
+}
+
+.submit-btn {
+  padding: 13px;
+  border: none;
+  border-radius: 7px;
+  background: #2563eb;
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.submit-btn:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.message {
+  margin-top: 18px;
+  padding: 12px;
+  background: #eff6ff;
+  border-radius: 7px;
+  overflow-wrap: anywhere;
+}
+
+.footer-text {
+  margin-top: 25px;
+}
+
+
+
+================================================
+FILE: frontend/src/App.tsx
+================================================
+
+import { useState } from "react";
+import "./App.css";
+
+function App() {
+  const [isLogin, setIsLogin] = useState(true);
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setMessage("");
+    setLoading(true);
+
+    try {
+      const endpoint = isLogin ? "login" : "register";
+
+      const body = isLogin
+        ? { email, password }
+        : { name, email, password };
+
+      const response = await fetch(
+        `http://127.0.0.1:8000/api/auth/${endpoint}`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body),
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(
+          typeof data.detail === "string"
+            ? data.detail
+            : "Please check your input."
+        );
+      }
+
+      if (isLogin) {
+        localStorage.setItem("access_token", data.access_token);
+        setMessage("Login successful!");
+      } else {
+        setMessage("Registration successful! Please log in.");
+        setIsLogin(true);
+        setPassword("");
+      }
+    } catch (error) {
+      setMessage(
+        error instanceof Error ? error.message : "Something went wrong."
+      );
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return (
+    <main className="page">
+      <section className="auth-card">
+        <h1>Feature Flag System</h1>
+        <p className="subtitle">
+          Manage your features with confidence.
+        </p>
+
+        <div className="tabs">
+          <button
+            className={isLogin ? "active" : ""}
+            onClick={() => {
+              setIsLogin(true);
+              setMessage("");
+            }}
+          >
+            Login
+          </button>
+          <button
+            className={!isLogin ? "active" : ""}
+            onClick={() => {
+              setIsLogin(false);
+              setMessage("");
+            }}
+          >
+            Register
+          </button>
+        </div>
+
+        <h2>{isLogin ? "Welcome back!" : "Create an account"}</h2>
+
+        <form onSubmit={handleSubmit}>
+          {!isLogin && (
+            <label>
+              Full name
+              <input
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Enter your name"
+                minLength={2}
+                maxLength={100}
+                required
+              />
+            </label>
+          )}
+
+          <label>
+            Email
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="you@example.com"
+              required
+            />
+          </label>
+
+          <label>
+            Password
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Minimum 8 characters"
+              minLength={8}
+              maxLength={128}
+              required
+            />
+          </label>
+
+          <button className="submit-btn" disabled={loading}>
+            {loading
+              ? "Please wait..."
+              : isLogin
+                ? "Login"
+                : "Create account"}
+          </button>
+        </form>
+
+        {message && <p className="message">{message}</p>}
+
+        <p className="footer-text">
+          Feature Flag Management System
+        </p>
+      </section>
+    </main>
+  );
+}
+
+export default App;
+
+
+
+================================================
+FILE: frontend/src/index.css
+================================================
+:root {
+  --text: #6b6375;
+  --text-h: #08060d;
+  --bg: #fff;
+  --border: #e5e4e7;
+  --code-bg: #f4f3ec;
+  --accent: #aa3bff;
+  --accent-bg: rgba(170, 59, 255, 0.1);
+  --accent-border: rgba(170, 59, 255, 0.5);
+  --social-bg: rgba(244, 243, 236, 0.5);
+  --shadow:
+    rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
+
+  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
+  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
+  --mono: ui-monospace, Consolas, monospace;
+
+  font: 18px/145% var(--sans);
+  letter-spacing: 0.18px;
+  color-scheme: light dark;
+  color: var(--text);
+  background: var(--bg);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  @media (max-width: 1024px) {
+    font-size: 16px;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --text: #9ca3af;
+    --text-h: #f3f4f6;
+    --bg: #16171d;
+    --border: #2e303a;
+    --code-bg: #1f2028;
+    --accent: #c084fc;
+    --accent-bg: rgba(192, 132, 252, 0.15);
+    --accent-border: rgba(192, 132, 252, 0.5);
+    --social-bg: rgba(47, 48, 58, 0.5);
+    --shadow:
+      rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
+  }
+
+  #social .button-icon {
+    filter: invert(1) brightness(2);
+  }
+}
+
+#root {
+  width: 1126px;
+  max-width: 100%;
+  margin: 0 auto;
+  text-align: center;
+  border-inline: 1px solid var(--border);
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}
+
+h1,
+h2 {
+  font-family: var(--heading);
+  font-weight: 500;
+  color: var(--text-h);
+}
+
+h1 {
+  font-size: 56px;
+  letter-spacing: -1.68px;
+  margin: 32px 0;
+  @media (max-width: 1024px) {
+    font-size: 36px;
+    margin: 20px 0;
+  }
+}
+h2 {
+  font-size: 24px;
+  line-height: 118%;
+  letter-spacing: -0.24px;
+  margin: 0 0 8px;
+  @media (max-width: 1024px) {
+    font-size: 20px;
+  }
+}
+p {
+  margin: 0;
+}
+
+code,
+.counter {
+  font-family: var(--mono);
+  display: inline-flex;
+  border-radius: 4px;
+  color: var(--text-h);
+}
+
+code {
+  font-size: 15px;
+  line-height: 135%;
+  padding: 4px 8px;
+  background: var(--code-bg);
+}
+
+
+
+================================================
+FILE: frontend/src/main.tsx
+================================================
+import { StrictMode } from 'react'
+import { createRoot } from 'react-dom/client'
+import './index.css'
+import App from './App.tsx'
+
+createRoot(document.getElementById('root')!).render(
+  <StrictMode>
+    <App />
+  </StrictMode>,
+)
+
+
